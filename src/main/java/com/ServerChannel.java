@@ -35,18 +35,18 @@ public class ServerChannel {
 
         try {
             serverSocketChannel = ServerSocketChannel.open();
-
             serverSocketChannel.configureBlocking(false);
-
             InetSocketAddress address = new InetSocketAddress(host, port);
-
             serverSocketChannel.socket().bind(address);
 
-            acceptThread = new Thread(new Acceptor(serverSocketChannel));
+            Dispatcher dispatcher = new Dispatcher();
+            acceptThread = new Thread(new Acceptor(serverSocketChannel, dispatcher));
             acceptThread.start();
+            dispatcher.run();
 
         } catch (Exception ex) {
-            System.out.println("ex: " + ex.getStackTrace());
+            //System.out.println("ex: " + ex.getStackTrace());
+            ex.printStackTrace();
         }
 
         try {
@@ -54,8 +54,8 @@ public class ServerChannel {
         } catch (InterruptedException ex) {
             System.out.println("thread Interrupted ");
         }
-
     }
+
     private void acceptConnections(String host, int port) throws Exception {
 
 //        serverSocketChannel = ServerSocketChannel.open();
@@ -124,8 +124,8 @@ public class ServerChannel {
         //ReadFile();
         //writeFile();
         //ReadMappedFile();
-        ServerChannel server = new ServerChannel("192.168.21.197", 8090);
-        server.start("192.168.21.197", 8090);
+        ServerChannel server = new ServerChannel("192.168.0.105", 18099);
+        server.start("192.168.0.105", 8090);
         System.out.println( "end of example!" );
     }
 }
