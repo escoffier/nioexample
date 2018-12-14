@@ -23,7 +23,12 @@ public class Acceptor implements Runnable {
     @Override
     public void run() {
         try {
-            while (acceptSelector.select() > 0) {
+            System.out.println("acceptSelector selecting");
+            for (;;) {
+            //while (acceptSelector.select() > 0) {
+
+                acceptSelector.select();
+                System.out.println("acceptSelector select return");
                 Set keys = acceptSelector.selectedKeys();
                 Iterator iterator = keys.iterator();
 
@@ -35,10 +40,15 @@ public class Acceptor implements Runnable {
                         SocketChannel socketChannel = serverSocketChannel.accept();
                         socketChannel.configureBlocking(false);
                         //socketChannel.register(acceptSelector, SelectionKey.OP_READ);
-                        dispatcher.register(socketChannel, selectionKey.OP_READ, null);
 
-                        Socket newSocket = serverSocketChannel.accept().socket();
-                        System.out.println("Accept connection from: " + newSocket.getRemoteSocketAddress());
+                        ChannelIO channelIO = ChannelIO.getInstance(socketChannel, false);
+
+                        RequestHandler requestHandler = new RequestHandler(channelIO);
+
+                        dispatcher.register(socketChannel, selectionKey.OP_READ, requestHandler);
+
+                        //Socket newSocket = serverSocketChannel.accept().socket();
+                       // System.out.println("Accept connection from: " + newSocket.getRemoteSocketAddress());
 
                     } else if (selectionKey.isReadable()) {
 
@@ -47,7 +57,7 @@ public class Acceptor implements Runnable {
 
             }
         } catch (Exception ex) {
-            System.out.println("Exception" + ex.getStackTrace());
+            System.out.println("Exception: " + ex.getStackTrace());
         }
     }
 

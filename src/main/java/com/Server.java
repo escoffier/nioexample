@@ -6,7 +6,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.util.Queue;
 
-public class ServerChannel {
+public class Server {
 
 //    String host;
 //    int port;
@@ -22,7 +22,7 @@ public class ServerChannel {
 
     private Queue<ServerSocketChannel> socketQueue;
 
-    public ServerChannel(String host, int port) throws Exception{
+    public Server(String host, int port) throws Exception{
         byteBuffer = ByteBuffer.allocate(128);
 
         //readSelector = Selector.open();
@@ -124,8 +124,8 @@ public class ServerChannel {
         //ReadFile();
         //writeFile();
         //ReadMappedFile();
-        ServerChannel server = new ServerChannel("192.168.0.105", 18099);
-        server.start("192.168.0.105", 8090);
+        Server server = new Server("192.168.21.197", 18099);
+        server.start("192.168.21.197", 8090);
         System.out.println( "end of example!" );
     }
 }

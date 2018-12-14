@@ -1,6 +1,7 @@
 package com;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -22,7 +23,8 @@ public class Dispatcher implements Runnable{
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.out.println("Dispatcher register ex: "+  ex.toString());
+            //ex.printStackTrace();
         }
     }
 
@@ -30,17 +32,36 @@ public class Dispatcher implements Runnable{
 
     private void dispatch() {
         try {
+            //System.out.println("Dispatcher selecting");
             selector.select();
 
             Iterator iterator = selector.selectedKeys().iterator();
             while (iterator.hasNext()) {
                 SelectionKey selectionKey = (SelectionKey)iterator.next();
                 iterator.remove();
-                System.out.println("receive data from");
+                System.out.println("receive data");
+                //SocketChannel clientChannel = (SocketChannel)selectionKey.channel();
+                //clientChannel.read()
+
+                RequestHandler requestHandler = (RequestHandler)selectionKey.attachment();
+                requestHandler.handle(selectionKey);
+
+
+//                String resp = "HTTP/1.1 200 \n" +
+//                        "Content-Type: application/xml\n" +
+//                        "Content-Length: 0\n" +
+//                        "Date: Mon, 10 Dec 2018 10:06:21 GMT";
+//                ByteBuffer buffer = ByteBuffer.allocate(1000);
+//
+//                byte[] data = resp.toString().getBytes();
+//                buffer.put(data);
+//                buffer.flip();
+//                clientChannel.write(buffer);
 
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.out.println("dispatch ex: "+ ex.toString());
+            //ex.printStackTrace();
 
         }
         synchronized (gate) { }
