@@ -5,6 +5,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.util.Queue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
 
@@ -35,14 +37,22 @@ public class Server {
 
         try {
             serverSocketChannel = ServerSocketChannel.open();
-            serverSocketChannel.configureBlocking(false);
+            //serverSocketChannel.configureBlocking(false);
             InetSocketAddress address = new InetSocketAddress(host, port);
             serverSocketChannel.socket().bind(address);
 
-            Dispatcher dispatcher = new Dispatcher();
-            acceptThread = new Thread(new Acceptor(serverSocketChannel, dispatcher));
+//            Dispatcher dispatcher = new Dispatcher();
+//            acceptThread = new Thread(new Acceptor(serverSocketChannel, dispatcher));
+//            acceptThread.start();
+//            dispatcher.run();
+
+
+            DispatcherPool dispatcherPool = new DispatcherPool(8);
+            dispatcherPool.run();
+
+            acceptThread = new Thread(new Acceptor1(serverSocketChannel, dispatcherPool));
             acceptThread.start();
-            dispatcher.run();
+
 
         } catch (Exception ex) {
             //System.out.println("ex: " + ex.getStackTrace());
@@ -51,6 +61,7 @@ public class Server {
 
         try {
             acceptThread.join();
+            System.out.println("acceptThread exit ");
         } catch (InterruptedException ex) {
             System.out.println("thread Interrupted ");
         }

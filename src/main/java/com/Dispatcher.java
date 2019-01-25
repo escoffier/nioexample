@@ -32,14 +32,14 @@ public class Dispatcher implements Runnable{
 
     private void dispatch() {
         try {
-            //System.out.println("Dispatcher selecting");
+            System.out.println("Dispatcher selecting");
             selector.select();
 
             Iterator iterator = selector.selectedKeys().iterator();
             while (iterator.hasNext()) {
                 SelectionKey selectionKey = (SelectionKey)iterator.next();
                 iterator.remove();
-                System.out.println("receive data");
+                System.out.println("receive data in thread " + Thread.currentThread().getName());
                 //SocketChannel clientChannel = (SocketChannel)selectionKey.channel();
                 //clientChannel.read()
 

@@ -13,12 +13,15 @@ public class Acceptor implements Runnable {
 
     Selector acceptSelector;
     Dispatcher dispatcher;
+    //DispatcherPool dispatcherPool;
 
     public Acceptor(ServerSocketChannel serverSocketChannel, Dispatcher dispatcher) throws Exception{
         this.dispatcher = dispatcher;
         this.acceptSelector = SelectorProvider.provider().openSelector();
         serverSocketChannel.register(acceptSelector, SelectionKey.OP_ACCEPT);
     }
+
+
 
     @Override
     public void run() {
